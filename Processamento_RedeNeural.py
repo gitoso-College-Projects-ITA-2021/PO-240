@@ -16,6 +16,7 @@ import tensorflow.keras.optimizers as optimizers
 import tensorflow.keras.activations as activations
 
 from dataset import separa_dataset
+from model import basic_model, convolutional_model, custom_loss
 
 
 from tensorflow.python.client import device_lib
@@ -26,64 +27,9 @@ print(device_lib.list_local_devices())
 
 dataset_folder = 'KaggleDatasets/RAW/'
 preprocess_folder = 'KaggleDatasets/PRE/'
-filename = 'KaggleDatasets/PRE/preprocessado_small.csv'
+filename = 'KaggleDatasets/PRE/preprocessado.csv'
 dataset = pd.read_csv(filename)
 print(dataset.head())
-
-
-def custom_loss(Y_true, Y_pred):
-    weights_dict = {
-        0: 1.00,
-        1: 0.75,
-        2: 0.60,
-        3: 0.50,
-        4: 0.43,
-        5: 0.38,
-        6: 0.33
-    }
-    weights = []
-
-
-def basic_model():
-    input_layer = layers.Input(shape=(input_shape,))
-    x = layers.Dense(1024, activation=activations.linear)(input_layer)
-    x = layers.LeakyReLU(alpha)(x)
-    x = layers.Dropout(dropout_rate)(x)
-    x = layers.Dense(1024, activation=activations.linear)(x)
-    x = layers.LeakyReLU(alpha)(x)
-    x = layers.Dropout(dropout_rate)(x)
-    x = layers.Dense(1024, activation=activations.linear)(x)
-    x = layers.LeakyReLU(alpha)(x)
-    x = layers.Dropout(dropout_rate)(x)
-    x = layers.Dense(1024, activation=activations.linear)(x)
-    x = layers.LeakyReLU(alpha)(x)
-    x = layers.Dropout(dropout_rate)(x)
-    output_layer = layers.Dense(
-        output_shape, activation=activations.linear)(x)
-    return models.Model(inputs=input_layer, outputs=output_layer)
-
-
-def convolutional_model():
-    input_layer = layers.Input(shape=(7747,))
-
-    general_input = input_layer[:, 0:5]
-    temporal_input = input_layer[:, 5:]
-    temporal_input = tf.reshape(temporal_input, [-1, 553, 14, 1])
-
-    x = layers.Conv1D(124, 5, activation='relu')(temporal_input)
-    x = layers.MaxPool2D(pool_size=(54, 10))(x)
-    x = layers.Flatten()(x)
-
-    x = layers.Concatenate(axis=1)([general_input, x])
-    x = layers.Dense(16*1024, activation=activations.linear)(x)
-    x = layers.LeakyReLU(alpha)(x)
-    x = layers.Dense(1024, activation=activations.linear)(x)
-    x = layers.LeakyReLU(alpha)(x)
-    output_layer = layers.Dense(
-        output_shape,
-        activation=activations.linear
-    )(x)
-    return models.Model(inputs=input_layer, outputs=output_layer)
 
 
 if __name__ == "__main__":
@@ -110,13 +56,13 @@ if __name__ == "__main__":
     input_shape = X_train.shape[1]
     output_shape = Y_train.shape[1]
 
-    model = basic_model()
-    # model = convolutional_model()
+    model = basic_model(input_shape, output_shape)
+    # model = convolutional_model(input_shape, output_shape)
 
     opt = optimizers.Adam()
     model.compile(
         optimizer=opt,
-        loss=losses.mean_squared_error,
+        loss=custom_loss(output_shape),
         metrics=[metrics.mean_squared_error])
     print(model.summary())
 
@@ -128,7 +74,7 @@ if __name__ == "__main__":
         X_train,
         Y_train,
         batch_size=batch_size,
-        epochs=100,
+        epochs=150,
         # We pass some validation for
         # monitoring validation loss and metrics
         # at the end of each epoch

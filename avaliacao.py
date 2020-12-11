@@ -6,8 +6,10 @@ import seaborn as sn
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
+from tensorflow.keras.models import load_model
+
 from dataset import prepara_dataset
-from tensorflow import keras
+from model import basic_model, custom_loss
 
 
 input_folder = 'KaggleDatasets/RAW/'
@@ -18,11 +20,17 @@ print('Openning file:', output_folder)
 answers = open(output_folder, "w")
 answers.write("id,value\n")
 
-print('Loading model from:', model_folder)
-model = keras.models.load_model(model_folder)
-
 sample = pd.read_csv(input_folder + '201701.csv', nrows=0)
 output_cols = [col for col in sample.columns if col.startswith("output")]
+
+print('Loading model from:', model_folder)
+model = load_model(
+    model_folder,
+    custom_objects={
+        # Tensorflow doesn't save the function, so it must be passed here (same name)
+        'compute_loss': custom_loss(len(output_cols))
+    }
+)
 
 
 print('Arquivos:')

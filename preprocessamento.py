@@ -40,5 +40,5 @@ if __name__ == "__main__":
         datasets.append(ds)
 
     dataset = pd.concat(datasets, sort=False)
-    dataset = prepara_dataset(dataset)
+    dataset, _ = prepara_dataset(dataset)
     dataset.to_csv(output_folder + filename, index=False)
