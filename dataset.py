@@ -7,8 +7,11 @@ from datetime import datetime
 def prepara_dataset(dataset, verbose=True):
     ids = dataset['id'].copy()
     dataset = dataset.drop(['id'], axis=1)
-    dataset['date'] = dataset['date'].apply(
-        lambda x: datetime.strptime(x, "%Y-%m-%d").day)
+    dataset['day'] = dataset['date'].apply(
+        lambda x: datetime.strptime(x, "%Y-%m-%d").weekday() / 6)
+    dataset['week'] = dataset['date'].apply(
+        lambda x: datetime.strptime(x, "%Y-%m-%d").isocalendar()[1] / 53)
+    dataset = dataset.drop(['date'], axis=1)
 
     for column in dataset:
         num_na = dataset[column].isnull().sum()
