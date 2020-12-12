@@ -69,24 +69,22 @@ if __name__ == "__main__":
 
     batch_size = 1024
 
+    # tensorboard is setted for visualization
     tensorboard = TensorBoard(
         log_dir=os.path.join("logs", "{}".format(time())))
+
     history = model.fit(
         X_train,
         Y_train,
         batch_size=batch_size,
         epochs=100,
-        # We pass some validation for
-        # monitoring validation loss and metrics
-        # at the end of each epoch
         validation_data=(X_val, Y_val),
         validation_batch_size=batch_size,
         callbacks=[tensorboard]
     )
 
-    fig_format = 'png'
-
     # Plotting cost function convergence
+    fig_format = 'png'
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
     plt.xlabel('Epoch')
@@ -96,4 +94,5 @@ if __name__ == "__main__":
     plt.grid()
     plt.savefig('convergence' + '.' + fig_format, format=fig_format)
 
+    # Saving the network for testing
     model.save(filepath='./KaggleDatasets/Weights/final_model.hdf5')

@@ -34,6 +34,10 @@ def custom_loss(output_len):
     return compute_loss
 
 
+#
+# A função a baixo gera uma rede com função de ativação LeakyReLU
+#
+
 # def basic_model(input_len, output_len):
 #     input_layer = layers.Input(shape=(input_len,))
 #     x = layers.Dense(8 * 1024, activation=activations.linear)(input_layer)
@@ -48,6 +52,11 @@ def custom_loss(output_len):
 #     output_layer = layers.Dense(
 #         output_len, activation=activations.linear)(x)
 #     return models.Model(inputs=input_layer, outputs=output_layer)
+
+
+#
+# A função a baixo gera uma rede com função de ativação Tangente Hiperbólica
+#
 
 def basic_model(input_len, output_len):
     input_layer = layers.Input(shape=(input_len,))
