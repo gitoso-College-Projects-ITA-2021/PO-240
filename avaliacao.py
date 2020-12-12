@@ -31,6 +31,7 @@ model = load_model(
         'compute_loss': custom_loss(len(output_cols))
     }
 )
+print(model.summary())
 
 
 print('Arquivos:')
@@ -42,6 +43,7 @@ for entry in os.listdir(input_folder):
 
 
 def avalia_teste(model, dataset):
+    print(dataset.head())
     print('Iniciando Inferencia...')
     predictions = model.predict(dataset)
     print('Terminando Inferencia!')

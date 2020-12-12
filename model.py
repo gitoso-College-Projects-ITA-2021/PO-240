@@ -30,20 +30,32 @@ def custom_loss(output_len):
         squares = tf.square(Y_true - Y_pred)
         weighted = squares * weights
         mean = tf.reduce_sum(weighted, axis=-1) / sum_weights
-        return tf.sqrt(mean)
+        return mean
     return compute_loss
 
 
+# def basic_model(input_len, output_len):
+#     input_layer = layers.Input(shape=(input_len,))
+#     x = layers.Dense(8 * 1024, activation=activations.linear)(input_layer)
+#     x = layers.LeakyReLU(alpha)(x)
+#     x = layers.Dropout(dropout_rate)(x)
+#     x = layers.Dense(2 * 1024, activation=activations.linear)(x)
+#     x = layers.LeakyReLU(alpha)(x)
+#     x = layers.Dropout(dropout_rate)(x)
+#     x = layers.Dense(1024, activation=activations.linear)(x)
+#     x = layers.LeakyReLU(alpha)(x)
+#     x = layers.Dropout(dropout_rate)(x)
+#     output_layer = layers.Dense(
+#         output_len, activation=activations.linear)(x)
+#     return models.Model(inputs=input_layer, outputs=output_layer)
+
 def basic_model(input_len, output_len):
     input_layer = layers.Input(shape=(input_len,))
-    x = layers.Dense(8 * 1024, activation=activations.linear)(input_layer)
-    x = layers.LeakyReLU(alpha)(x)
+    x = layers.Dense(8 * 1024, activation=activations.tanh)(input_layer)
     x = layers.Dropout(dropout_rate)(x)
-    x = layers.Dense(2 * 1024, activation=activations.linear)(x)
-    x = layers.LeakyReLU(alpha)(x)
+    x = layers.Dense(2 * 1024, activation=activations.tanh)(x)
     x = layers.Dropout(dropout_rate)(x)
-    x = layers.Dense(1024, activation=activations.linear)(x)
-    x = layers.LeakyReLU(alpha)(x)
+    x = layers.Dense(1024, activation=activations.tanh)(x)
     x = layers.Dropout(dropout_rate)(x)
     output_layer = layers.Dense(
         output_len, activation=activations.linear)(x)

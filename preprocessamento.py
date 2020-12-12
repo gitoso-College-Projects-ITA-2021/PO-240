@@ -49,7 +49,7 @@ if __name__ == "__main__":
         ds = ds.sample(frac=.5)
         datasets.append(ds)
 
-    dataset = pd.concat(datasets, sort=True, copy=False)
+    dataset = pd.concat(datasets, copy=False)
     dataset, _ = prepara_dataset(dataset)
     print(dataset.head())
     dataset.to_csv(output_folder + filename, index=False)
